@@ -1,0 +1,7 @@
+-keep class com.deviceactivitytracker.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class retrofit2.** { *; }
+-keep interface retrofit2.** { *; }
+-keepattributes *Annotation*
+-keep class kotlin.** { *; }
+-keep class kotlinx.** { *; }
