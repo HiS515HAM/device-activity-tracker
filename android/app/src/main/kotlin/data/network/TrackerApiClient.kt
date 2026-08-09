@@ -1,10 +1,13 @@
 package com.deviceactivitytracker.data.network
 
 import com.deviceactivitytracker.data.model.DeviceStatus
+import com.deviceactivitytracker.data.model.DeviceInfo
 import com.google.gson.annotations.SerializedName
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 data class TrackingResult(
@@ -14,6 +17,13 @@ data class TrackingResult(
     val status: String,
     @SerializedName("timestamp")
     val timestamp: String
+)
+
+data class DeviceInfoRequest(
+    @SerializedName("phoneNumber")
+    val phoneNumber: String,
+    @SerializedName("deviceInfo")
+    val deviceInfo: DeviceInfo
 )
 
 interface TrackerApiService {
@@ -26,6 +36,11 @@ interface TrackerApiService {
     suspend fun getHistory(
         @Query("phone") phoneNumber: String
     ): List<TrackingResult>
+    
+    @POST("/api/device-info")
+    suspend fun sendDeviceInfo(
+        @Body deviceInfoRequest: DeviceInfoRequest
+    ): Boolean
 }
 
 class TrackerApiClient(baseUrl: String = "http://10.0.2.2:3001") {
@@ -58,6 +73,14 @@ class TrackerApiClient(baseUrl: String = "http://10.0.2.2:3001") {
             }
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+    
+    suspend fun sendDeviceInfo(phoneNumber: String, deviceInfo: DeviceInfo): Boolean {
+        return try {
+            apiService.sendDeviceInfo(DeviceInfoRequest(phoneNumber, deviceInfo))
+        } catch (e: Exception) {
+            false
         }
     }
 }
